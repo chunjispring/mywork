@@ -1,0 +1,21 @@
+经过本人测试，如果对于大型仓库，还不如删掉远程仓库重新创建来得快，以下步骤仅仅是减少了重新创建仓库的步骤
+
+git仓库删除所有提交历史记录，成为一个干净的新仓库
+
+1.根据当前分支(假设当前分支为master)创建一个独立无父级的新分支
+git checkout --orphan latest_branch
+
+2.把所有的文件重新添加用于提交
+git add -A
+
+3.提交这次更改
+git commit -am "init commit"
+
+4.删除原有分支master
+git branch -D master
+
+5.重命名当前独立分支为master
+git branch -m master
+
+6.最后强制更新服务端仓库master分支
+git push -f origin master

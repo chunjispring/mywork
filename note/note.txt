@@ -1,0 +1,45 @@
+1、安装lampp套件
+    sudo apt install lampp
+    sudo apt install php7.1-mbstring
+
+2、链接phpmyadmin
+    cd /var/www/
+    sudo chown -R pactera:pactera html
+    cd /var/www/html
+    ln -s /usr/share/phpmyadmin phpmyadmin
+    
+    sudo /etc/init.d/apache2 restart
+
+3、mysql开发包(c接口)
+    sudo apt install libmysqlclient-dev
+
+4、libevent开发包
+    sudo apt install libevent-dev
+
+5、可视界面监控工具cacti
+    sudo apt install cacti
+
+6、可视界面监控工具zabbix
+    详见官网
+
+7、vscode 插件
+    Beautify                HookyQR                1.3.0
+    Git-Project-Manager     felipe-caputo          1.4.0
+    Code-Runner             jun-han                0.9.0
+    C++Intellisense         austin                 0.2.2
+    project-manager         alessandro-Fragnani    0.24.1
+    material-icon-theme     philipp-kief           3.2.3
+    C/C++                   microsoft              0.15.0
+
+  other:
+    georgewfraser.vscode-javac-0.0.47
+    ms-python.python-2018.1.0
+    robertohuertasm.vscode-icons-7.20.0
+    TsumiNa.seti-theme-0.0.1
+    /usr/local/lib/node_modules/xxxxxxmer/node_modules/puppeteer/.local-chromium/linux-515411/chrome-linux
+
+8、git配置
+    git config --global user.email "chunjispring88@163.com"
+    git config --global user.name "chunjispring"
+    git config credential.helper store
+

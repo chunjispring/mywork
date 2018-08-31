@@ -1,0 +1,206 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <time.h>
+
+#include "mycomm.h"
+
+char *filename = "cfg.ini";
+
+void menu()
+{
+    printf("===========================\n");
+    printf("1 写配置\n");
+    printf("2 读配置\n");
+    printf("0 退出\n");
+    printf("===========================\n");
+}
+
+int tWrite()
+{
+
+    char key[1024] = {0}, value[1024] = {0};
+
+    printf("输入要写入的key:");
+    scanf("%s", key);
+    printf("输入要写入的value:");
+    scanf("%s", value);
+    printf("\n整个要写入的串是　%s = %s\n", key, value);
+
+    return writeCFG(filename /*in*/, key /*in*/, value /*in*/);
+}
+
+void tRead()
+{
+    char key[1024] = {0};
+    char *value;
+
+    printf("输入要读取的key:");
+    scanf("%s", key);
+
+    readCFG(filename /*in*/, key /*in*/, &value /*out*/);
+    if (value == NULL)
+    {
+        printf("不存在此key\n");
+        return;
+    }
+    printf("\nvalue = %s\n", value);
+
+    if (value != NULL)
+    {
+        free(value);
+        value = NULL;
+    }
+}
+
+int testCfg1()
+{
+    unsigned int i = 0;
+    int iBack = 0;
+    char SessionName1[20 + 1];
+    char SessionName2[20 + 1];
+    char SessionName3[20 + 1];
+    char SessionName4[20 + 1];
+    char key_file[20 + 1];
+    char key[MAX_CFG_NUM][8 + 1], *pKey[MAX_CFG_NUM];
+    char *paraNm1[] = {"key1", "key2", "key3"};
+    char *paraNm2[] = {"mm"};
+    //char *paraNm3[] = { "ip", "port"};
+    char *paraNm4[] = {"name", "age", "sex", "birth", "level", "a", "b"};
+    //    FILE *fpCfg = NULL;
+
+    //strcpy(agLogModule, "CFG1");
+
+    memset(SessionName1, 0x00, sizeof(SessionName1));
+    memset(SessionName2, 0x00, sizeof(SessionName2));
+    memset(SessionName3, 0x00, sizeof(SessionName3));
+    memset(SessionName4, 0x00, sizeof(SessionName3));
+    memset(key, 0x00, sizeof(key));
+    memset(key_file, 0x00, sizeof(key_file));
+
+    sprintf(SessionName1, "KEY");
+    sprintf(SessionName2, "CONFIG");
+    sprintf(SessionName3, "IP");
+    sprintf(SessionName4, "HHAA");
+
+    sprintf(key_file, "%s/mm.cfg", (char *)getenv("MYCFGPATH"));
+    for (i = 0; i < MAX_CFG_NUM; i++)
+    {
+        pKey[i] = key[i];
+    }
+
+    //    printf("the num is :%d\n", sizeof(paraNm3)/8);
+    iBack = GetKeyValueFrmFile(key_file, SessionName1, paraNm1, sizeof(paraNm1) / 8, pKey);
+    if (iBack != 0)
+    {
+        PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "Call GetKeyValueFrmFile ERROR[%s]", iBack);
+        return FAILURE;
+    }
+
+    for (i = 0; i < sizeof(paraNm1) / 8; i++)
+    {
+        PL_Trace(INFO, __FILE__, __LINE__, __FUNCTION__, "keyValue[%s]", key[i]);
+    }
+
+    iBack = GetKeyValueFrmFile(key_file, SessionName2, paraNm2, sizeof(paraNm2) / 8, pKey);
+    if (iBack != 0)
+    {
+        PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "Call GetKeyValueFrmFile ERROR[%s]", iBack);
+        return FAILURE;
+    }
+
+    for (i = 0; i < sizeof(paraNm2) / 8; i++)
+    {
+        PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "keyValue[%s]", key[i]);
+    }
+    PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "*******************************************");
+
+    iBack = GetKeyValueFrmFile(key_file, SessionName4, paraNm4, sizeof(paraNm4) / 8, pKey);
+    if (iBack != 0)
+    {
+        PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "Call GetKeyValueFrmFile ERROR[%s]", iBack);
+        return FAILURE;
+    }
+
+    for (i = 0; i < sizeof(paraNm4) / 8; i++)
+    {
+        PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "keyValue[%s]", key[i]);
+    }
+
+    return SUCCESS;
+}
+
+int testCfg2()
+{
+    int choose;
+
+    strcpy(agLogModule, "CFG2");
+
+    while (1)
+    {
+        choose = 0;
+        menu();
+        printf("请输入你的选择:");
+        scanf("%d", &choose);
+        switch (choose)
+        {
+        case 1:
+            if (tWrite() == -1)
+                return -1;
+            break;
+        case 2:
+            tRead();
+            break;
+        case 0:
+            return 0;
+        default:
+            return 0;
+        }
+    }
+    system("pause");
+
+    return SUCCESS;
+}
+
+int testCfg3()
+{
+    int i, iBack = 0, cout = 0;
+    char key_file[20 + 1];
+
+    sprintf(key_file, "%s/mm.cfg", (char *)getenv("MYCFGPATH"));
+    //strcpy(agLogModule, "CFG3");
+
+    sCfgStruct smcfg;
+    memset(&smcfg, 0x00, sizeof(smcfg));
+    strcpy(smcfg.aczSessName, "KEY");
+    strcpy(smcfg.cfg[0].aczKeyName, "key1");
+    strcpy(smcfg.cfg[1].aczKeyName, "key2");
+    strcpy(smcfg.cfg[2].aczKeyName, "key3");
+
+    for (i = 0; i < MAX_CFG_NUM; i++)
+    {
+        if (strlen(smcfg.cfg[i].aczKeyName))
+        {
+            //printf("%s\n", smcfg.cfg[i].aczKeyName);
+            cout++;
+        }
+    }
+
+    //    printf("%d\n", cout);
+
+    for (i = 0; i < cout; i++)
+    {
+        iBack = GetKeyValueFrmFileOne(key_file, smcfg.aczSessName, smcfg.cfg[i].aczKeyName, smcfg.cfg[i].aczKeyValue);
+        if (iBack != 0)
+        {
+            PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "Call GetKeyValueFrmFile ERROR[%s]", iBack);
+            return FAILURE;
+        }
+        PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "SN[%s], keyN[%s], keyV[%s]", smcfg.aczSessName, smcfg.cfg[i].aczKeyName, smcfg.cfg[i].aczKeyValue);
+    }
+
+    //    PL_Trace(DEBUG, __FILE__, __LINE__, __FUNCTION__, "SN[%s], keyN[%s], keyV[%s]", smcfg.aczSessName, smcfg.cfg[2].aczKeyName, smcfg.cfg[2].aczKeyValue);
+    return SUCCESS;
+}
