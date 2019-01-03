@@ -43,3 +43,8 @@
     git config --global user.name "chunjispring"
     git config credential.helper store
 
+9、如果现在已经安装了 xshell,需要先卸载 然后 删除注册表 HKEY_CURRENT_USER\Software\NetSarang\ 所有项目
+  1.先去官网下载 xshell6,注意下载地址 需要把 Xshell-6.0.0109p.exe 或者 Xshell-6.0.0109.exe 替换成 Xshell-6.0.0109r.exe (r才可以输入激活码)
+  2.安装完后,先运行一次, 然后打开注册表 HKEY_CURRENT_USER\Software\NetSarang\Xshell\6\LiveUpdate 权限改成禁止
+  提供 xshell plus 版本的 key: 181229-117511-999455
+
