@@ -1,0 +1,12 @@
+１获得路径中的文件名
+比如 f=/home/usrname/dir/x.txt，要得到x.txt
+
+  b=${f##*/}
+  echo $b 
+
+２获得x.txt的前缀名
+  b="x.txt"
+　c=${b%.*}
+  echo $c
+  
+  
